@@ -7,8 +7,26 @@ let addNote = (title, body) => {
         title,
         body
     };
-    notes.push(note);
-    fs.writeFileSync('notes-data.json', notes);
+    
+    // Check is notes-data.json exists
+    try {
+        let notesString = fs.readFileSync('notes-data.json');
+        notes = JSON.parse(notesString);
+    } catch(err) {
+        console.log("Error! No file to read");
+    }
+    
+    // Create an array of duplicate notes (aka if != 0, there is a duplicate)
+    let duplicateNotes = notes.filter((note) => note.title === title);
+    console.log(duplicateNotes);
+    
+    if (duplicateNotes == 0) {
+        notes.push(note);
+        fs.writeFileSync('notes-data.json', JSON.stringify(notes));
+    } else {
+        console.log('Error! This is a duplicate note title.')
+    }
+
 };
 
 let getAll = () => {
@@ -37,3 +55,7 @@ module.exports = {
 //module.exports.add = (num1, num2) => {
 //    return num1 + num2;
 //};
+// Check for duplicate notes (ES5)
+//    let duplicateNotes = notes.filter((note) => {
+//        return note.title === title;
+//    });
