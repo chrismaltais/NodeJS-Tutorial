@@ -1,32 +1,40 @@
 console.log('Starting notes.js');
 const fs = require('fs');
 
+// Write Note
+let saveNotes = (notes) => {
+    try {
+        fs.writeFileSync('notes-data.json', JSON.stringify(notes));
+    } catch (err) {
+        console.log("Cannot write file.");
+    }
+};
+
+// Read Notes
+let fetchNotes = () => {
+    try {
+        let notesString = fs.readFileSync('notes-data.json');
+        return JSON.parse(notesString);
+    } catch (err) {
+        return [];
+    }
+};
+
 let addNote = (title, body) => {
-    let notes = []; // Initialize empty array;
+    var notes = fetchNotes(); // Grab existing data
     let note = {
         title,
         body
     };
     
-    // Check is notes-data.json exists
-    try {
-        let notesString = fs.readFileSync('notes-data.json');
-        notes = JSON.parse(notesString);
-    } catch(err) {
-        console.log("Error! No file to read");
-    }
-    
     // Create an array of duplicate notes (aka if != 0, there is a duplicate)
     let duplicateNotes = notes.filter((note) => note.title === title);
-    console.log(duplicateNotes);
     
-    if (duplicateNotes == 0) {
+    if (duplicateNotes.length === 0) {
         notes.push(note);
-        fs.writeFileSync('notes-data.json', JSON.stringify(notes));
-    } else {
-        console.log('Error! This is a duplicate note title.')
+        saveNotes(notes);
+        return note;
     }
-
 };
 
 let getAll = () => {
@@ -34,18 +42,32 @@ let getAll = () => {
 }
 
 let removeNote = (title) => {
-    console.log(`Removing note you specified as "${title}"`);
+    let notes = fetchNotes();
+    // Fill array filteredNote with all elements that pass the test of note.title !== title;
+    let filteredNotes = notes.filter((note) => note.title !== title);
+    saveNotes(filteredNotes);
+    
+    return notes.length !== filteredNotes.length;
 };
 
 let readNote = (title) => {
-    console.log(`Reading file '${title}'...`)
+    let notes = fetchNotes();
+    let noteRead = notes.filter((note) => note.title === title);
+    return noteRead[0];
 };
+
+let logNote = (note) => {
+    console.log('---');
+    console.log(`Title: ${note.title}`);
+    console.log(`Body: ${note.body}`);
+}
 
 module.exports = {
     addNote, // or addNote: addNote; (ES5)
     getAll,
     removeNote,
-    readNote
+    readNote,
+    logNote
 };
 // LEARNING STUFF //////////////////////////
 // ES5
