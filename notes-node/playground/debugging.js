@@ -2,7 +2,12 @@ let person = {
     name: 'Chris'
 }
 
-person.age = 21;
+person.age = 26;
+
+debugger;
+
 person.name = 'Mike';
+
+debugger;
 
 console.log(person);

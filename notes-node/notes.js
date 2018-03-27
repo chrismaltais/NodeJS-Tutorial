@@ -1,4 +1,3 @@
-console.log('Starting notes.js');
 const fs = require('fs');
 
 // Write Note
@@ -20,6 +19,7 @@ let fetchNotes = () => {
     }
 };
 
+// Add Note
 let addNote = (title, body) => {
     var notes = fetchNotes(); // Grab existing data
     let note = {
@@ -37,10 +37,12 @@ let addNote = (title, body) => {
     }
 };
 
+// List Notes
 let getAll = () => {
-    console.log('Getting all notes');
+    return fetchNotes();
 }
 
+// Remove specific Note
 let removeNote = (title) => {
     let notes = fetchNotes();
     // Fill array filteredNote with all elements that pass the test of note.title !== title;
@@ -50,13 +52,16 @@ let removeNote = (title) => {
     return notes.length !== filteredNotes.length;
 };
 
+// Read Specific Note
 let readNote = (title) => {
     let notes = fetchNotes();
     let noteRead = notes.filter((note) => note.title === title);
     return noteRead[0];
 };
 
+// Log the note
 let logNote = (note) => {
+    debugger;
     console.log('---');
     console.log(`Title: ${note.title}`);
     console.log(`Body: ${note.body}`);
@@ -69,6 +74,7 @@ module.exports = {
     readNote,
     logNote
 };
+
 // LEARNING STUFF //////////////////////////
 // ES5
 // module.exports.addNote = function() {
