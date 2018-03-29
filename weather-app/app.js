@@ -1,8 +1,33 @@
 const request = require('request');
-// Options object and callback function
-request({
-    url: 'http://maps.googleapis.com/maps/api/geocode/json?address=6139%20Westwater%20Crescent',
-    json: true // return as a JSON instead of JSON string
-}, (error, response, body) => {
-    console.log(body);
+const yargs = require('yargs');
+const geocode = require('./geocode/geocode');
+
+const argv = yargs
+    .options({
+        address: {
+            demand: true,
+            alias: 'a',
+            describe: 'Address to fetch weather for',
+            string: true
+        }
+    })
+    .help()
+    .alias('help', 'h')
+    .argv;
+
+geocode.geocodeAddress(argv.address, (errorMessage, results) => {
+    if (errorMessage) {
+        console.log(errorMessage);
+    } else {
+        console.log(JSON.stringify(results, undefined, 2));
+    }
 });
+
+debugger;
+
+// Notes: /////////////////////////////////////////////////////////////
+// Error -> Status code
+// Response -> Headers, Request info
+// Body -> Body
+// Edits formatting for printing in the console, no objects get clipped
+// console.log(JSON.stringify(body, undefined, 2)); 
