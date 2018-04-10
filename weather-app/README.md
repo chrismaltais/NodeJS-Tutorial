@@ -23,8 +23,11 @@ let decodedString = decodeURIComponent(encodedString);
 ```
 
 **Template for Requests:**
+
 Error → Status Code
+
 Response → Headers, Request info
+
 Body → Body
 
 ```javascript
@@ -43,7 +46,7 @@ request({
 });
 ```
 
-**Template for Returning Variables from Request Asynchronously via Callbacks**
+**Template for Returning Variables from Request Asynchronously via Callbacks:**
 
 ```javascript
 const request = require('request');
@@ -68,7 +71,8 @@ module.exports = {
 }
 ```
 
-**Calling Modules within app.js**
+**Calling Modules within app.js:**
+
 Passing in variables and a callback function for asynchronous results
 
 ```javascript
