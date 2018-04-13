@@ -84,11 +84,11 @@ Passing in variables and a callback function for asynchronous results
     number.toFixed(2);
 
 **Promises (ES6 Feature):**
-Purpose: Make handling of asynchronous calls easier
+- Purpose: Make handling of asynchronous calls easier
+- Replaces callback functions!
+- Preferred because there is no need to nest if-else statements, code looks more clean!
+- Can only be resolved or rejected once.
 
-Replaces callback functions!
-
-Preferered because there is no need to nest if-else statements, code looks more clean!
 **Two Results (Inputs to constructor function):**
 
 1. Resolve
@@ -99,21 +99,18 @@ Preferered because there is no need to nest if-else statements, code looks more 
 1. Pending
 2. Settled
 
-Can only be resolved or rejected once.
+**Two examples can be seen in code:**
 
-Two examples can be seen in code:
-
-1. geocodeAddress in promise-2.js → uses request module
-2. app-promise.js → uses axios module (built in promises)
+1. ```geocodeAddress``` in ```promise-2.js``` → uses ```request``` module
+2. ```app-promise.js``` → uses ```axios``` module (built in promises)
 
 **Environment Variables**
-Used to hide private keys/data
+- Used to hide private keys/data
+- Note, do not check .env file into repository!
 
 1. Create .env file in project folder
 2. Add .env to .gitignore (touch .gitignore && echo '.env' >> .gitignore)
 3. Add private keys to .env file
 4. Add require(‘dotenv’).config() to top of file where keys are used
 5. Access keys using process.env.nameOfKey;
-
-Note, do not check .env file into repository!
 
