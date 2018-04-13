@@ -25,6 +25,7 @@ let getWeather = (latitude, longitude, callback) => {
 debugger;
 
 module.exports = {
-    getWeather
+    getWeather,
+    convertToCelsius
 }
 
