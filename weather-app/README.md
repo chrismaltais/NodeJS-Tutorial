@@ -5,9 +5,9 @@
 
 
 **Debugging in Chrome Developer Tools:**
-
-    node --inspect-brk app.js
-
+```javascript
+node --inspect-brk app.js
+```
 In Chrome: Go to **chrome://inspect**
 Keyboard Shortcuts:
 
@@ -15,72 +15,78 @@ Keyboard Shortcuts:
 2. ctrl + L → Clear the console
 
 **Encoding/Decoding URI’s:**
-
-    let encodedString = encodeURIComponent('613 Jacobsen Road');
-    // encodedString = 613%Jacobsen%Road
-    let decodedString = decodeURIComponent(encodedString);
-    // decodedString = 613 Jacobsen Road
+```javascript
+let encodedString = encodeURIComponent('613 Jacobsen Road');
+// encodedString = 613%Jacobsen%Road
+let decodedString = decodeURIComponent(encodedString);
+// decodedString = 613 Jacobsen Road
+```
 
 **Template for Requests:**
+
 Error → Status Code
+
 Response → Headers, Request info
+
 Body → Body
 
-
-    const request = require('request');
-    request({
-      url: // Insert URL
-      json: true // Returns as JSON instead of JSON String
-    }, (error, response, body) => {
-      if (error) {
+```javascript
+const request = require('request');
+request({
+    url: // Insert URL
+    json: true // Returns as JSON instead of JSON String
+}, (error, response, body) => {
+    if (error) {
         console.log("Unable to connect to requesting server");
-      } else if (!error && response.statusCode === 200) {
+    } else if (!error && response.statusCode === 200) {
         console.log(`Info wanted: ${body.location.in.json}`);
-      } else {
+    } else {
         console.log("Invalid request parameters");
-      }
-    });
+    }
+});
+```
 
-**Template for Returning Variables from Request Asynchronously via Callbacks**
+**Template for Returning Variables from Request Asynchronously via Callbacks:**
 
-
-    const request = require('request');
-    let getWeather = (var1, var2, callback) => {
-      request({
+```javascript
+const request = require('request');
+let getWeather = (var1, var2, callback) => {
+    request({
         url: // Insert URL
         json: true // Returns as JSON instead of JSON String
-      }, (error, response, body) => {
+    }, (error, response, body) => {
         if (error) {
           callback("Unable to connect to requesting server");
         } else if (!error && response.statusCode === 200) {
-          callback(undefined, {
+            callback(undefined, {
             variableFromJSON1: body.location.in.JSON;
             variableFromJSON2: body.location.in.JSON2;    
-          });
         } else {
-          callback("Invalid request parameters");
+            callback("Invalid request parameters");
         }
       });
     }
-    module.exports = {
-      getWeather
-    }
+module.exports = {
+    getWeather
+}
+```
 
-**Calling Modules within app.js**
+**Calling Modules within app.js:**
+
 Passing in variables and a callback function for asynchronous results
 
-
-    const weather = require('./folder/file');
-    weather.moduleName(variable1, variable2, (errorMessage, results) => {
-      if (errorMessage) {
+```javascript
+const weather = require('./folder/file');
+weather.moduleName(variable1, variable2, (errorMessage, results) => {
+    if (errorMessage) {
         console.log(errorMessage); 
-      } else {
+    } else {
         console.log(JSON.stringify(weatherResults, undefined, 2)); // Prettify the results
-      }
-    });
-
+    }
+});
+```
 **Format Numbers to Specific Decimal Places:**
-
-    number.toFixed(2);
-
+```javascript
+number.toFixed(2);
+```
 
