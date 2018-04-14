@@ -3,3 +3,4 @@ weather-app/node_modules/
 weather-app/.env
 node-web-server/node_modules/
 node-web-server/server.log
+node-tests/node_modules/
