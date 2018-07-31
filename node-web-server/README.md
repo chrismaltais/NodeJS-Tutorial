@@ -1,33 +1,35 @@
 # Lessons Learned
-Request: Stores information about requestion coming in, headers, body, etc.
-Response: Respond how you want to respond to this request
+**Request:** Stores information about request coming in, headers, body, etc.
 
-app.listen(port) binds the app to a port on our machine
+**Response:** Respond how you want to respond to this request
 
-Tip: Option + Cmd + i opens Developer Tools for Chrome
+`app.listen(port)` binds the app to a port on our machine
 
-Middleware: Let’s you define how your application works, can be thought of as a third party add on
+Tip: `option + cmd + i` opens Developer Tools for Chrome
 
-app.use(express.static());
+**Middleware:** Let’s you define how your application works, can be thought of as a third party add on
+
 express.static → Takes absolute path of file you want to serve
 
-**__dirname**: The directory name of the current module. This is the same as the `[path.dirname()](https://nodejs.org/docs/latest/api/path.html#path_path_dirname_path)` of the `[__filename](https://nodejs.org/docs/latest/api/modules.html#modules_filename)`
+`app.use(express.static());`
 
-View Engines: Templates to inject information into (similar to PHP!)
+**__dirname**: The directory name of the current module. This is the same as the `[path.dirname()]` of the `[__filename]`
+
+**View Engines:** Templates to inject information into (similar to PHP!)
+
 Multiple types of View Engines:
 
-- Express (.ejs)
-- Handlbars (.hbs)
+- Express (`.ejs`)
+- Handlbars (`.hbs`)
 
-Tip: Get current year in JS → new Date().getFullYear()
+`res.send()` for static pages,
 
-res.send() for static pages,
-res.render() for dynamic pages
+`res.render()` for dynamic pages.
 
 **Partials:**
 
 - Partial piece of a website
-    hbs.registerPartials(__dirname + '/views/partials')
+    `hbs.registerPartials(__dirname + '/views/partials')`
 
 Syntax:
 
@@ -39,52 +41,62 @@ Syntax:
 
 Initialize:
 
-    hbs.registerHelper('getCurrentYear', () => {
-        return new Date().getFullYear();
-    });
+```javascript
+hbs.registerHelper('getCurrentYear', () => {
+    return new Date().getFullYear();
+ });
+```
 
 Use:
 
-    <footer>
-        <p>Copyright {{getCurrentYear}}</p>
-    </footer>
+```
+<footer>
+    <p>Copyright {{getCurrentYear}}</p>
+</footer>
+```
 
 **Middleware:**
 
 - If next is not specified, page will be unable to load.
-- Executed in the order you use app.use!
+- Executed in the order you use `app.use`!
 
 **Using middleware to create a log:**
 
-    const express = require('express');
-    const fs = require('fs');
-    let app = express();
+const express = require('express');
+const fs = require('fs');
+let app = express();
     
-    app.use((req, res, next) => {
-        let now = new Date().toString();
-        let log = `${now}: ${req.method} ${req.url}`;
-        console.log(log);
-        fs.appendFile('server.log', log, (err) => {
-            if (err) {
-                console.log('Unable to append to server.log');
-            }
-        });
-        next();
+```javascript
+app.use((req, res, next) => {
+    let now = new Date().toString();
+    let log = `${now}: ${req.method} ${req.url}`;
+    console.log(log);
+    fs.appendFile('server.log', log, (err) => {
+        if (err) {
+            console.log('Unable to append to server.log');
+        }
     });
+    next();
+});
+```
 
-next is to tell express when middleware is done.
+`next()` is to tell express when middleware is done.
 
-Tip: Date().toString() prints the current date (great for logging!)
+**Tip:** `Date().toString()` prints the current date (great for logging!)
 
-**Deploying to Heroku:**
-Environment Variables:
+## Deploying to Heroku:**
+Environment Variables: 
 
-    const port = process.env.PORT || 3000;
+```javascript
+const port = process.env.PORT || 3000;
+```
 
-How Heroku knows what to run when booted up:
+### How Heroku knows what to run when booted up:
 
-- In package.json, in “scripts” add:
-    "start": "node script.js"
+- In `package.json`, in “scripts” add:
+    `"start": "node script.js"`
 - Can now start app with:
-    npm start
+    `npm start`
+    
+**Tip:** Get current year in JS → `new Date().getFullYear()`
 
