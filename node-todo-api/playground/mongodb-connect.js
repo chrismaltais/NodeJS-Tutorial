@@ -1,36 +1,30 @@
 // const MongoClient = require('mongodb').MongoClient;
 const {MongoClient, ObjectID} = require('mongodb');
+const uri = 'mongodb://localhost:27017/ProfileProjectTest'
 let obj = new ObjectID();
 console.log(obj);
 
+
 // First argument is where database lives (could be heroku or AWS, etc.)
-MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, client) => {
+MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
     if (err) {
         return console.log('Unable to connect to MongoDB server');
     }
     console.log('Connected to MongoDB server');
-    const db = client.db('TodoApp');
+    const db = client.db('ProfileProjectTest');
 
-    // db.collection('ToDos').insertOne({
-    //     item: 'Task 1',
-    //     completed: false
-    // }, (err, result) => {
-    //     if (err) {
-    //         return console.log('Unable to insert Todo!', err);
-    //     }
-    //     console.log(JSON.stringify(result.ops, undefined, 2));
-    // });
-
-    db.collection('Users').insertOne({
-        name: 'Chris Maltais',
-        age: 21,
-        location: 'Toronto, ON'
+    db.collection('Members').insertOne({
+        name: 'Smith MSithens',
+        age: 20,
+        program: 'Computer Engineering',
+        year: 2,
+        email: 'smith.smithens@queensu.ca'
     }, (err, result) => {
         if (err) {
             return console.log('Could not insert user. Error:', err);
         }
-        console.log(result.ops[0]._id.getTimestamp());
-        console.log(JSON.stringify(result.ops, undefined, 2));
+        //console.log(result.ops[0]._id.getTimestamp());
+        console.log(JSON.stringify(result.ops, undefined, 4));
     })
 
     client.close();
