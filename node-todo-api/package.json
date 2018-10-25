@@ -4,7 +4,7 @@
   "description": "Example of setting up MongoDB and APIs",
   "main": "index.js",
   "scripts": {
-    "test": "jest --forceExit"
+    "test": "ENV=test jest"
   },
   "author": "",
   "license": "ISC",

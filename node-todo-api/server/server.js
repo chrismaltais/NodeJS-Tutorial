@@ -28,8 +28,10 @@ app.post('/members', (req, res) => {
 
 // GET /member/123
 
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
-});
+if (process.env.ENV !== 'test') {
+    app.listen(port, () => {
+        console.log(`Listening on port ${port}`);
+    });
+}
 
 module.exports = {app};
