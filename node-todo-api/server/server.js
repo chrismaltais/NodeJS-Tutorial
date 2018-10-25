@@ -1,33 +1,33 @@
-const mongoose = require('mongoose');
+let express = require('express');
+let bodyParser = require('body-parser');
+const port = 3000 || process.env.PORT;
 
-// Mongoose connects to DB before anything below can happen 
-// Blocking Call!
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/ProfileProjectTest', { useNewUrlParser: true });
+// Use object destructuring otherwise would need to do Member.Member
+let {mongoose} = require('./db/mongoose');
+let {Member} = require('./models/members');
+let {Project} = require('./models/projects');
 
-// Contains no validation
-let Member = mongoose.model('Member', {
-    name: { type: String, required: true, trim: true },
-    email: { type: String, require: true, trim: true },
-    password: { type: String, require: true, trim: true },
-    joined: { type: Date, default: Date.now }, 
-    bio: { type: String, default: null },
-    photo: { type: String },
-    tags: { type: Array, default: [] },
-    clubs: { type: Array, default: [] },
-    projects: { type: Array, default: [] }
+let app = express();
+
+//Return value of bodyParser.json() is a function, which is a middleware we need to give to express
+app.use(bodyParser.json());
+
+app.post('/members', (req, res) => {
+    let member = new Member({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password
+    });
+
+    member.save().then((doc) => {
+        res.send(doc);
+    }, (err) => {
+        res.status(400).send(err);
+    })
 });
 
-// Beware of typecasting!
-let newMember = new Member({
-    name: 'Jacob Jacobsen',
-    email: 'jacobb.jacobsen@queensu.ca',
-    password: 'pass123'
-});
+// GET /member/123
 
-newMember.save().then((doc) => {
-    let {name} = newMember;
-    console.log(`Saved new member: ${name}`);
-}, (err) => {
-    console.log('Unable to save user.')
-})
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+});
