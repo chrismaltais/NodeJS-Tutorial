@@ -4,7 +4,7 @@
   "description": "Example of setting up MongoDB and APIs",
   "main": "index.js",
   "scripts": {
-    "test": "ENV=test jest"
+    "test": "ENV=test jest --detectOpenHandles"
   },
   "author": "",
   "license": "ISC",

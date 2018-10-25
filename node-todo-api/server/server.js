@@ -26,7 +26,16 @@ app.post('/members', (req, res) => {
     })
 });
 
-// GET /member/123
+app.get('/members', (req, res) => {
+    Member.find().then((members) => {
+        res.send({
+            members,
+            message: 'This is a test!'
+        })
+    }, (err) => {
+        res.status(400).send(err);
+    });
+});
 
 if (process.env.ENV !== 'test') {
     app.listen(port, () => {
