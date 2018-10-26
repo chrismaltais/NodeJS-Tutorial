@@ -43,7 +43,7 @@ describe('POST /members', () => {
                     return done(err);
                 }
                 Member.find({email: testMember.email}).then((members) => {
-                    expect(members.length).toBe(1); // 3 bc 2 initally then added 1
+                    expect(members.length).toBe(1); 
                     expect(members[0].name).toBe(testMember.name);
                     expect(members[0].email).toBe(testMember.email);
                     expect(members[0].password).toBe(testMember.password);
