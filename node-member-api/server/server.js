@@ -1,5 +1,6 @@
 let express = require('express');
 let bodyParser = require('body-parser');
+let {ObjectId} = require('mongodb');
 const port = 3000 || process.env.PORT;
 
 // Use object destructuring otherwise would need to do Member.Member
@@ -34,6 +35,25 @@ app.get('/members', (req, res) => {
         })
     }, (err) => {
         res.status(400).send(err);
+    });
+});
+
+app.get('/members/:id', (req, res) => {
+    let id = req.params.id;
+
+    if (!ObjectId.isValid(id)) {
+        res.status(400).send({
+            error: 'ObjectId is not valid'
+        });
+    }
+
+    Member.findById(id).then((member) => {
+        if (!member) {
+            res.status(404).send({error: 'Member not found'});
+        }
+        res.status(200).send({member});
+    }).catch((err) => {
+        res.status(400).send(); // Send needs to be blank, why?
     });
 });
 
