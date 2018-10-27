@@ -1,13 +1,16 @@
 const request = require('supertest');
+const {ObjectId} = require('mongodb');
 
 const {app} = require('./../server');
 const {Member} = require('./../models/members');
 
 let testMembers = [{
+    _id: new ObjectId(),
     name: 'Jeff Jeffy',
     email: 'jeff.jeffy@queensu.ca',
     password: 'pass123'
 }, {
+    _id: new ObjectId(),
     name: 'Joe Budden',
     email: 'joe.budden@queensu.ca',
     password: 'pass123'
@@ -76,9 +79,23 @@ describe('GET /members', () => {
         request(app)
             .get('/members')
             .expect(200)
-            .expect((res) => {
+            .expect((res) => { // Custom expect call
                 expect(res.body.members.length).toBe(2);
             })
             .end(done)
     });
-})
+});
+
+describe('GET /members/:id', () => {
+    it('should return member document', (done) => {
+        request(app)
+            .get(`/members/${testMembers[0]._id.toHexString()}`)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.member.name).toBe(testMembers[0].name);
+                expect(res.body.member.email).toBe(testMembers[0].email);
+                expect(res.body.member.password).toBe(testMembers[0].password)
+            })
+            .end(done)
+    });
+});

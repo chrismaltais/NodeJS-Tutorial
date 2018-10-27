@@ -30,7 +30,7 @@ app.post('/members', (req, res) => {
 app.get('/members', (req, res) => {
     Member.find().then((members) => {
         res.send({
-            members,
+            members, // This is what your object will be called!
             message: 'This is a test!'
         })
     }, (err) => {
@@ -51,7 +51,7 @@ app.get('/members/:id', (req, res) => {
         if (!member) {
             res.status(404).send({error: 'Member not found'});
         }
-        res.status(200).send({member});
+        res.status(200).send({member}); // Object name returned is 'member'
     }).catch((err) => {
         res.status(400).send(); // Send needs to be blank, why?
     });
