@@ -42,7 +42,7 @@ app.get('/members/:id', (req, res) => {
     let id = req.params.id;
 
     if (!ObjectId.isValid(id)) {
-        res.status(400).send({
+        res.status(404).send({
             error: 'ObjectId is not valid'
         });
     }

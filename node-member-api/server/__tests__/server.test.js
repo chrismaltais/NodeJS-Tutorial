@@ -98,4 +98,21 @@ describe('GET /members/:id', () => {
             })
             .end(done)
     });
+
+    it('should return 404 if member not found', (done) => {
+        // Make sure you get 404 back
+        let fakeID = new ObjectId();
+        request(app)
+            .get(`/members/${fakeID.toHexString}`)
+            .expect(404)
+            .end(done);
+    });
+
+    it('should return 404 for non-object ids', (done) => {
+        // /todos/123
+        request(app)
+            .get('/members/123')
+            .expect(404)
+            .end(done)
+    })
 });
