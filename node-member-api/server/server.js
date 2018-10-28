@@ -1,6 +1,7 @@
-let express = require('express');
-let bodyParser = require('body-parser');
-let {ObjectId} = require('mongodb');
+const _ = require('lodash');
+const express = require('express');
+const bodyParser = require('body-parser');
+const {ObjectId} = require('mongodb');
 const port = process.env.PORT || 3000;
 
 // Use object destructuring otherwise would need to do Member.Member
@@ -74,6 +75,28 @@ app.delete('/members/:id', (req, res) => {
     }).catch((err) => res.status(400).send());
 });
 
+app.patch('/members/:id', (req, res) => {
+    let id = req.params.id;
+    let body = _.pick(req.body, ['bio', 'photo']);
+
+    if (!ObjectId.isValid(id)) {
+        return res.status(404).send({
+            error: 'Invalid Object ID'
+        });
+    }
+
+    body.bio = req.body.bio;
+    body.photo = req.body.photo;
+
+    Member.findByIdAndUpdate(id, {$set: body}, {new: true}).then((member) => {
+        if (!member) {
+            return res.status(404).send({
+                error: 'Member not found!'
+            })
+        }
+        res.status(200).send({member});
+    }).catch((e) => res.status(400).send());
+})
 if (process.env.ENV !== 'test') {
     app.listen(port, () => {
         console.log(`Listening on port ${port}`);
