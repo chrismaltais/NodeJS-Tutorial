@@ -4,7 +4,11 @@
   "description": "Example of setting up MongoDB and APIs",
   "main": "index.js",
   "scripts": {
+    "start": "node server/server.js",
     "test": "ENV=test jest --detectOpenHandles"
+  },
+  "engines": {
+    "node": "9.10.1"
   },
   "author": "",
   "license": "ISC",
