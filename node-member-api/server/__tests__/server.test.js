@@ -116,3 +116,40 @@ describe('GET /members/:id', () => {
             .end(done)
     })
 });
+
+describe('DELETE /members/:id', () => {
+    it('should delete member document', (done) => {
+        let id = testMembers[0]._id.toHexString()
+        request(app)
+            .delete(`/members/${id}`)
+            .expect(200)
+            .expect((result) => {
+                expect(result.body.member.name).toBe(testMembers[0].name);
+                expect(result.body.member.email).toBe(testMembers[0].email);
+                expect(result.body.member.password).toBe(testMembers[0].password);
+            }).end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+                Member.findById(id).then((member) => {
+                    expect(member).toBeNull();
+                    done();
+                }).catch((e) => done(e));
+            })
+    });
+
+    it('should return 404 if member not found', (done) => {
+        let fakeID = new ObjectId();
+        request(app)
+            .delete(`/members/${fakeID.toHexString()}`)
+            .expect(404)
+            .end(done)
+    });
+
+    it('should return 404 for non-object ids', (done) => {
+        request(app)
+            .delete('/members/123')
+            .expect(404)
+            .end(done)
+    });
+});

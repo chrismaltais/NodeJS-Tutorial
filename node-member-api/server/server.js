@@ -59,7 +59,7 @@ app.get('/members/:id', (req, res) => {
 
 app.delete('/members/:id', (req, res) => {
     let id = req.params.id;
-    
+     
     if (!ObjectId.isValid(id)) {
         return res.status(404).send({
             error: 'Invalid Object Id'
@@ -70,7 +70,7 @@ app.delete('/members/:id', (req, res) => {
         if (!member) {
             return res.status(404).send({error: 'Member not found in database!'});
         }
-        res.status(200).send(member);
+        res.status(200).send({member});
     }).catch((err) => res.status(400).send());
 });
 
