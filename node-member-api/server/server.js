@@ -1,7 +1,7 @@
 let express = require('express');
 let bodyParser = require('body-parser');
 let {ObjectId} = require('mongodb');
-const port = 3000 || process.env.PORT;
+const port = process.env.PORT || 3000;
 
 // Use object destructuring otherwise would need to do Member.Member
 let {mongoose} = require('./db/mongoose');
@@ -49,12 +49,29 @@ app.get('/members/:id', (req, res) => {
 
     Member.findById(id).then((member) => {
         if (!member) {
-            res.status(404).send({error: 'Member not found'});
+            return res.status(404).send({error: 'Member not found'});
         }
         res.status(200).send({member}); // Object name returned is 'member'
     }).catch((err) => {
         res.status(400).send(); // Send needs to be blank, why?
     });
+});
+
+app.delete('/members/:id', (req, res) => {
+    let id = req.params.id;
+    
+    if (!ObjectId.isValid(id)) {
+        return res.status(404).send({
+            error: 'Invalid Object Id'
+        });
+    }
+
+    Member.findByIdAndDelete(id).then((member) => {
+        if (!member) {
+            return res.status(404).send({error: 'Member not found in database!'});
+        }
+        res.status(200).send(member);
+    }).catch((err) => res.status(400).send());
 });
 
 if (process.env.ENV !== 'test') {
