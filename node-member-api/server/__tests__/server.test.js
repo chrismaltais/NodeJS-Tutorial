@@ -8,12 +8,14 @@ let testMembers = [{
     _id: new ObjectId(),
     name: 'Jeff Jeffy',
     email: 'jeff.jeffy@queensu.ca',
-    password: 'pass123'
+    password: 'pass123',
+    bio: null
 }, {
     _id: new ObjectId(),
     name: 'Joe Budden',
     email: 'joe.budden@queensu.ca',
-    password: 'pass123'
+    password: 'pass123',
+    bio: null
 }];
 
 // Clear DB to allow for proper testing
@@ -149,6 +151,46 @@ describe('DELETE /members/:id', () => {
     it('should return 404 for non-object ids', (done) => {
         request(app)
             .delete('/members/123')
+            .expect(404)
+            .end(done)
+    });
+});
+
+describe('PATCH /members/:id', () => {
+    it('should update a member', (done) => {
+        let updatedInfo = {
+            bio: 'I love coding!'
+        };
+        let id = testMembers[0]._id.toHexString();
+        request(app)
+            .patch(`/members/${id}`)
+            .send(updatedInfo)
+            .expect(200)
+            .expect((res) => { // Confirm what you're getting back, does not necessarily mean written to DB!
+                expect(res.body.member._id).toBe(id);
+                expect(res.body.member.bio).toBe(updatedInfo.bio);
+            }).end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+                Member.findById(id).then((member) => {
+                    expect(member.bio).toBe(updatedInfo.bio)
+                    done();
+                }).catch((e) => done(e))
+            });
+    });
+
+    it('should return 404 if member not found', (done) => {
+        let fakeID = new ObjectId();
+        request(app)
+            .patch(`/members/${fakeID.toHexString()}`)
+            .expect(404)
+            .end(done)
+    });
+
+    it('should return 404 for non object ids', (done) => {
+        request(app)
+            .patch('/members/123')
             .expect(404)
             .end(done)
     });

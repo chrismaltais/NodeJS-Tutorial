@@ -71,7 +71,7 @@ app.delete('/members/:id', (req, res) => {
         if (!member) {
             return res.status(404).send({error: 'Member not found in database!'});
         }
-        res.status(200).send({member});
+        res.status(200).send({member, deleted: true});
     }).catch((err) => res.status(400).send());
 });
 
@@ -96,7 +96,8 @@ app.patch('/members/:id', (req, res) => {
         }
         res.status(200).send({member});
     }).catch((e) => res.status(400).send());
-})
+});
+
 if (process.env.ENV !== 'test') {
     app.listen(port, () => {
         console.log(`Listening on port ${port}`);
