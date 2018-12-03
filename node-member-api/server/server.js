@@ -18,11 +18,8 @@ let app = express();
 app.use(bodyParser.json());
 
 app.post('/members', (req, res) => {
-    let member = new Member({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password
-    });
+    let body = _.pick(req.body, ['email', 'password', 'name']);
+    let member = new Member(body);
 
     member.save().then((doc) => {
         res.send(doc);
