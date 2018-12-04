@@ -21,10 +21,14 @@ app.post('/members', (req, res) => {
     let body = _.pick(req.body, ['email', 'password', 'name']);
     let member = new Member(body);
 
-    member.save().then((doc) => {
-        res.send(doc);
-    }, (err) => {
-        res.status(400).send(err);
+    console.log(member);
+    
+    member.save().then(() => {
+        return member.generateAuthToken();
+    }).then((token) => {
+        res.header('x-auth', token).send(member);
+    }).catch((e) => {
+        res.status(400).send(e);
     })
 });
 
