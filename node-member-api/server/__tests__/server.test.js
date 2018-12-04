@@ -3,27 +3,10 @@ const {ObjectId} = require('mongodb');
 
 const {app} = require('./../server');
 const {Member} = require('./../models/members');
-
-let testMembers = [{
-    _id: new ObjectId(),
-    name: 'Jeff Jeffy',
-    email: 'jeff.jeffy@queensu.ca',
-    password: 'pass123',
-    bio: null
-}, {
-    _id: new ObjectId(),
-    name: 'Joe Budden',
-    email: 'joe.budden@queensu.ca',
-    password: 'pass123',
-    bio: null
-}];
+const {testMembers, populateMembers} = require('./seed/seed');
 
 // Clear DB to allow for proper testing
-beforeEach((done) => {
-    Member.deleteMany({}).then(() => {
-        return Member.insertMany(testMembers)
-    }).then(() => done())
-});
+beforeEach(populateMembers);
 
 describe('POST /members', () => {
     it('should create a new member', (done) => {
@@ -41,7 +24,6 @@ describe('POST /members', () => {
             .expect((res) => {
                 expect(res.body.name).toBe(testMember.name);
                 expect(res.body.email).toBe(testMember.email);
-                expect(res.body.password).toBe(testMember.password);
             })
             .end((err, res) => { // handles errors above
                 if (err) {
@@ -51,7 +33,6 @@ describe('POST /members', () => {
                     expect(members.length).toBe(1); 
                     expect(members[0].name).toBe(testMember.name);
                     expect(members[0].email).toBe(testMember.email);
-                    expect(members[0].password).toBe(testMember.password);
                     done();
                 }).catch((err) => done(err));
             });
@@ -96,7 +77,6 @@ describe('GET /members/:id', () => {
             .expect((res) => {
                 expect(res.body.member.name).toBe(testMembers[0].name);
                 expect(res.body.member.email).toBe(testMembers[0].email);
-                expect(res.body.member.password).toBe(testMembers[0].password)
             })
             .end(done)
     });
@@ -128,7 +108,6 @@ describe('DELETE /members/:id', () => {
             .expect((result) => {
                 expect(result.body.member.name).toBe(testMembers[0].name);
                 expect(result.body.member.email).toBe(testMembers[0].email);
-                expect(result.body.member.password).toBe(testMembers[0].password);
             }).end((err, res) => {
                 if (err) {
                     return done(err);

@@ -22,8 +22,6 @@ app.use(bodyParser.json());
 app.post('/members', (req, res) => {
     let body = _.pick(req.body, ['email', 'password', 'name']);
     let member = new Member(body);
-
-    console.log(member);
     
     member.save().then(() => {
         return member.generateAuthToken();

@@ -46,7 +46,7 @@ const MemberSchema = new mongoose.Schema({
 MemberSchema.methods.toJSON = function () {
     let member = this;
     let memberObject = member.toObject();
-    return _.pick(memberObject, ['_id', 'name', 'email']);
+    return _.pick(memberObject, ['_id', 'name', 'email', 'bio']);
 }
 
 // Generates tokens and populates tokens field of schema
