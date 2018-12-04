@@ -6,6 +6,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectId} = require('mongodb');
 const port = process.env.PORT || 3000;
+const authenticate = require('./middleware/authenticate');
+const wrap = require('./middleware/asyncWrapper');
 
 // Use object destructuring otherwise would need to do Member.Member
 let {mongoose} = require('./db/mongoose');
@@ -42,6 +44,10 @@ app.get('/members', (req, res) => {
         res.status(400).send(err);
     });
 });
+
+app.get('/members/me', authenticate, (req, res) => {
+    res.send(req.member);
+})
 
 app.get('/members/:id', (req, res) => {
     let id = req.params.id;

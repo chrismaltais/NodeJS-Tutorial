@@ -41,6 +41,7 @@ const MemberSchema = new mongoose.Schema({
 })
 
 // Generates what gets sent back when a mongoose model is converted into JSON value
+// Instance method
 MemberSchema.methods.toJSON = function () {
     let member = this;
     let memberObject = member.toObject();
@@ -48,6 +49,7 @@ MemberSchema.methods.toJSON = function () {
 }
 
 // Generates tokens and populates tokens field of schema
+// Instance method
 MemberSchema.methods.generateAuthToken = function () {
     var member = this;
     var access = 'auth';
@@ -59,5 +61,22 @@ MemberSchema.methods.generateAuthToken = function () {
       return token;
     });
 };
+
+// Model method
+MemberSchema.statics.findByToken = function (token) {
+    let Member = this;
+    let decoded;
+    try {
+        decoded = jwt.verify(token, 'abc123');
+    } catch (e) {
+        return null;
+    }
+
+    return Member.findOne({
+        _id: decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    })
+}
 
 module.exports = MemberSchema;
