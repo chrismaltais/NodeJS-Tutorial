@@ -1,6 +1,7 @@
 const mongoose  = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 
 const MemberSchema = new mongoose.Schema({
@@ -62,6 +63,7 @@ MemberSchema.methods.generateAuthToken = function () {
     });
 };
 
+// Finds a user by Token
 // Model method
 MemberSchema.statics.findByToken = function (token) {
     let Member = this;
@@ -78,5 +80,19 @@ MemberSchema.statics.findByToken = function (token) {
         'tokens.access': 'auth'
     })
 }
+
+// Hashes the password if the password was modified
+// Instance method
+MemberSchema.pre('save', async function (next) {
+    let member = this;
+
+    if (member.isModified('password')) {
+        let salt = await bcrypt.genSalt(10);
+        member.password = await bcrypt.hash(member.password, salt);
+        next();
+    } else {
+        next();
+    }
+})
 
 module.exports = MemberSchema;
