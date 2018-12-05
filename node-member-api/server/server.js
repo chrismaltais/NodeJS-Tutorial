@@ -32,6 +32,16 @@ app.post('/members', (req, res) => {
     })
 });
 
+app.post('/login', wrap(async (req, res) => {
+    let body = _.pick(req.body, ['email', 'password']);
+    let foundMember = await Member.findByCredentials(body.email, body.password);
+    if (!foundMember) {
+        return res.status(401).send();
+    }
+    let token = await foundMember.generateAuthToken();
+    res.header('x-auth', token).status(200).send(foundMember);
+}));
+
 app.get('/members', (req, res) => {
     Member.find().then((members) => {
         res.send({

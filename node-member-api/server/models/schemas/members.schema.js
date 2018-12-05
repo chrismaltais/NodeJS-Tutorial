@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 
 const MemberSchema = new mongoose.Schema({
-    name: { type: String, required: true, trim: true },
+    name: { type: String, trim: true },
     email: { 
         type: String, 
         required: true, 
@@ -79,6 +79,25 @@ MemberSchema.statics.findByToken = function (token) {
         'tokens.token': token,
         'tokens.access': 'auth'
     })
+}
+
+// Find a user by credentials (i.e. login)
+// Model method
+MemberSchema.statics.findByCredentials = async function (email, password) {
+    let Member = this;
+    let foundMember = await Member.findOne({email});
+    
+    if (!foundMember) {
+        return null;
+    }
+
+    let isValidUser = await bcrypt.compare(password, foundMember.password);
+
+    if (isValidUser) {
+        return foundMember;
+    } else {
+        return null;
+    }
 }
 
 // Hashes the password if the password was modified
