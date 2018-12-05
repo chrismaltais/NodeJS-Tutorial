@@ -63,6 +63,19 @@ MemberSchema.methods.generateAuthToken = function () {
     });
 };
 
+// Deletes a member's token
+// $pull lets you remove an item from an array tht match certain criteria
+// Instance method
+MemberSchema.methods.deleteToken = async function (token) {
+    member = this;
+    return await member.update({
+        $pull: {
+            tokens: {token}
+        }
+    })
+
+}
+
 // Finds a user by Token
 // Model method
 MemberSchema.statics.findByToken = function (token) {
@@ -86,7 +99,7 @@ MemberSchema.statics.findByToken = function (token) {
 MemberSchema.statics.findByCredentials = async function (email, password) {
     let Member = this;
     let foundMember = await Member.findOne({email});
-    
+
     if (!foundMember) {
         return null;
     }

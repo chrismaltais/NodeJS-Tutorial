@@ -53,6 +53,45 @@ describe('POST /members', () => {
     })
 });
 
+describe('POST /login', () => {
+    it('should login member and return auth token', async () => {
+        let response = await request(app)
+            .post('/login')
+            .send({
+                email: testMembers[1].email,
+                password: testMembers[1].password
+            })
+            .expect(200)
+        
+        // Test that token was properly given
+        expect(response.headers['x-auth']).toBeDefined(); 
+
+        // Test that token given to member is the correct in database
+        let foundMember = await Member.findById(testMembers[1]._id);
+        expect(foundMember.tokens[0]).toMatchObject({ //toMatchObject used result is tested against subsset of objects
+            access: 'auth',
+            token: response.headers['x-auth']
+        });
+
+    });
+
+    it('should reject and invalid login', async () => {
+        let response = await request(app)
+            .post('/login')
+            .send({
+                email: testMembers[1].email,
+                password: 'IncorrectPassword'
+            })
+            .expect(401)
+
+            expect(response.headers['x-auth']).toBeUndefined()
+        
+            let foundMember = await Member.findById(testMembers[1]._id);
+            expect(foundMember.tokens.length).toBe(0);
+
+    });
+})
+
 describe('GET /members', () => {
     it('should get all members', (done) => {
         request(app)
