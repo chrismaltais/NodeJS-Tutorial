@@ -9,52 +9,48 @@ const {testMembers, populateMembers} = require('./seed/seed');
 beforeEach(populateMembers);
 
 describe('POST /members', () => {
-    it('should create a new member', (done) => {
-        // Mock Data
-        let testMember = {
-            name: 'Chris Maltais',
-            email: 'chris.maltais@queensu.ca',
-            password: 'pass123'
-        };
-        //Supertest!!
-        request(app)
+    it('should create a new member', async () => {
+        let name = 'Adam Hardy';
+        let email = 'adamhardy@hardy.com';
+        let password = 'pass1234';
+        let response = await request(app)
             .post('/members')
-            .send(testMember)
+            .send({name, email, password})
             .expect(200)
-            .expect((res) => {
-                expect(res.body.name).toBe(testMember.name);
-                expect(res.body.email).toBe(testMember.email);
-            })
-            .end((err, res) => { // handles errors above
-                if (err) {
-                    return done(err);
-                }
-                Member.find({email: testMember.email}).then((members) => {
-                    expect(members.length).toBe(1); 
-                    expect(members[0].name).toBe(testMember.name);
-                    expect(members[0].email).toBe(testMember.email);
-                    done();
-                }).catch((err) => done(err));
-            });
+        
+        expect(response.headers['x-auth']).toBeDefined();
+        expect(response.body._id).toBeDefined();
+        expect(response.body.email).toBe(email);
+
+        let memberFromDB = await Member.findOne({email});
+
+        expect(memberFromDB).toBeDefined();
+        expect(memberFromDB.password).not.toBe(password);
     });
 
-    it('should not create member with invalid body data', (done) => {
-        request(app)
+    it('should return validation errors if request invalid', async () => {
+        let name = 'Adam Hardy';
+        let invalidEmail = '123';
+        let password = 'pass1234';
+
+        let response = await request(app)
             .post('/members')
-            .send()
+            .send({name, invalidEmail, password})
             .expect(400)
-            .end((err, res) => {
-                if (err) {
-                    return done(err);
-                }
-                Member.find().then((members) => {
-                    expect(members.length).toBe(2);
-                    done(err);
-                }).catch((err) => {
-                    done(err);
-                });
-            });
     });
+    
+    it('should not create a user if email is in use', async () => {
+        let memberData = {
+            name: 'Adam Hardy',
+            email: testMembers[0].email,
+            password: 'pass1234'
+        }
+
+        let response = await request(app)
+            .post('/members')
+            .send(memberData)
+            .expect(400)
+    })
 });
 
 describe('GET /members', () => {
@@ -82,7 +78,6 @@ describe('GET /members/:id', () => {
     });
 
     it('should return 404 if member not found', (done) => {
-        // Make sure you get 404 back
         let fakeID = new ObjectId();
         request(app)
             .get(`/members/${fakeID.toHexString}`)
@@ -91,12 +86,31 @@ describe('GET /members/:id', () => {
     });
 
     it('should return 404 for non-object ids', (done) => {
-        // /todos/123
         request(app)
             .get('/members/123')
             .expect(404)
             .end(done)
+    });
+});
+
+describe('GET /members/me', () => {
+    it('should return member if authenticated', async ()=> {
+        let response = await request(app)
+            .get('/members/me')
+            .set('x-auth', testMembers[0].tokens[0].token) // Headers!
+            .expect(200)
+
+        expect(response.body._id).toBe(testMembers[0]._id.toHexString());
+        expect(response.body.email).toBe(testMembers[0].email);
     })
+
+    it('should return 401 if not authenticated', async () => {
+        let response = await request(app)
+            .get('/members/me')
+            .expect(401)
+        
+        expect(response.body).toEqual({});
+    });
 });
 
 describe('DELETE /members/:id', () => {
