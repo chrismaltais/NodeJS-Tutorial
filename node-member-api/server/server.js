@@ -43,14 +43,12 @@ app.post('/login', wrap(async (req, res) => {
 }));
 
 app.delete('/logout', authenticate, wrap(async (req, res) => {
-    let loggedOutMember = await req.member.deleteToken(req.token);
-    if (!loggedOutMember) {
-        return res.status(400).send();
+    try {
+        await req.member.deleteToken(req.token);
+    } catch (err) {
+        return res.status(400).send(err);
     }
 
-    console.log(loggedOutMember);
-
-    // What happens if logged out
     res.status(200).send();
 }))
 

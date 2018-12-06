@@ -92,6 +92,22 @@ describe('POST /login', () => {
     });
 })
 
+describe('DELETE /logout', () => {
+    it('should remove auth token on logout', async () => {
+        // DELETE /logout
+        // set x-auth equal to token
+        // expect 200 back
+        // Find user, verify that tokens array has length of zero
+        let response = await request(app)
+            .delete('/logout')
+            .set('x-auth', testMembers[0].tokens[0].token)
+            .expect(200)
+        
+        let memberFromDB = await Member.findById(testMembers[0]._id);
+        expect(memberFromDB.tokens.length).toBe(0);
+    });
+})
+
 describe('GET /members', () => {
     it('should get all members', (done) => {
         request(app)

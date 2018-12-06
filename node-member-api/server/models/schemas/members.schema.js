@@ -73,7 +73,6 @@ MemberSchema.methods.deleteToken = async function (token) {
             tokens: {token}
         }
     })
-
 }
 
 // Finds a user by Token
