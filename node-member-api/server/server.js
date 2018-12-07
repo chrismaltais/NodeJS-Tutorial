@@ -19,18 +19,18 @@ let app = express();
 //Return value of bodyParser.json() is a function, which is a middleware we need to give to express
 app.use(bodyParser.json());
 
-app.post('/members', (req, res) => {
+app.post('/members', wrap(async (req, res) => {
     let body = _.pick(req.body, ['email', 'password', 'name']);
-    let member = new Member(body);
-    
-    member.save().then(() => {
-        return member.generateAuthToken();
-    }).then((token) => {
+    let member;
+    try {
+        member = new Member(body);
+        await member.save();
+        let token = await member.generateAuthToken();
         res.header('x-auth', token).send(member);
-    }).catch((e) => {
-        res.status(400).send(e);
-    })
-});
+    } catch (err) {
+        res.status(400).send({error: 'Email already exists!'})
+    }
+}));
 
 app.post('/login', wrap(async (req, res) => {
     let body = _.pick(req.body, ['email', 'password']);
@@ -82,10 +82,11 @@ app.get('/members/:id', (req, res) => {
         }
         res.status(200).send({member}); // Object name returned is 'member'
     }).catch((err) => {
-        res.status(400).send(); // Send needs to be blank, why?
+        res.status(400).send(); 
     });
 });
 
+// Thinking about making this /members/me so only members can delete their own accounts
 app.delete('/members/:id', (req, res) => {
     let id = req.params.id;
      
@@ -103,28 +104,23 @@ app.delete('/members/:id', (req, res) => {
     }).catch((err) => res.status(400).send());
 });
 
-app.patch('/members/:id', (req, res) => {
-    let id = req.params.id;
-    let body = _.pick(req.body, ['bio', 'photo']);
 
-    if (!ObjectId.isValid(id)) {
-        return res.status(404).send({
-            error: 'Invalid Object ID'
-        });
-    }
-
-    body.bio = req.body.bio;
-    body.photo = req.body.photo;
-
-    Member.findByIdAndUpdate(id, {$set: body}, {new: true}).then((member) => {
-        if (!member) {
-            return res.status(404).send({
-                error: 'Member not found!'
-            })
+app.patch('/members/me', authenticate, wrap(async (req, res) => {
+    // Grab ID (req.member._id?)
+    let id = req.member._id;
+    let body = _.pick(req.body, ['name', 'bio', 'photo']);
+    let updatedMember;
+    try {
+        updatedMember = await Member.findByIdAndUpdate(id, {$set: body}, {new: true});
+        if (!updatedMember) {
+            return res.status(404).send({error: 'Member not found!'});
         }
-        res.status(200).send({member});
-    }).catch((e) => res.status(400).send());
-});
+    } catch (err) {
+        return res.status(400).send();
+    }
+    res.status(200).send(updatedMember);
+
+}))
 
 if (process.env.ENV !== 'test') {
     app.listen(port, () => {

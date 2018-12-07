@@ -204,28 +204,23 @@ describe('DELETE /members/:id', () => {
     });
 });
 
-describe('PATCH /members/:id', () => {
-    it('should update a member', (done) => {
+describe('PATCH /members/me', () => {
+    it('should update a member', async () => {
         let updatedInfo = {
             bio: 'I love coding!'
         };
-        let id = testMembers[0]._id.toHexString();
-        request(app)
-            .patch(`/members/${id}`)
+        let response = await request(app)
+            .patch(`/members/me`)
+            .set('x-auth', testMembers[0].tokens[0].token)
             .send(updatedInfo)
             .expect(200)
-            .expect((res) => { // Confirm what you're getting back, does not necessarily mean written to DB!
-                expect(res.body.member._id).toBe(id);
-                expect(res.body.member.bio).toBe(updatedInfo.bio);
-            }).end((err, res) => {
-                if (err) {
-                    return done(err);
-                }
-                Member.findById(id).then((member) => {
-                    expect(member.bio).toBe(updatedInfo.bio)
-                    done();
-                }).catch((e) => done(e))
-            });
+
+        expect(response.body._id).toBe(testMembers[0]._id.toHexString());
+        expect(response.body.bio).toBe(updatedInfo.bio);
+        
+        let updatedMember = await Member.findById(testMembers[0]._id)
+        expect(updatedMember.bio).toBe(updatedInfo.bio)
+
     });
 
     it('should return 404 if member not found', (done) => {
