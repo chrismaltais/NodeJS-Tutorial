@@ -1,0 +1,20 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "Chat app using Web Sockets",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "npm test"
+  },
+  "engines": {
+    "node": "9.10.1"
+  },
+  "author": "Chris Maltais (chris.maltais@queensu.ca)",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "path": "^0.12.7",
+    "socket.io": "^2.2.0"
+  }
+}
