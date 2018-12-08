@@ -87,7 +87,7 @@ app.get('/members/:id', (req, res) => {
 });
 
 // Thinking about making this /members/me so only members can delete their own accounts
-app.delete('/members/:id', (req, res) => {
+app.delete('/members/:id', async (req, res) => {
     let id = req.params.id;
      
     if (!ObjectId.isValid(id)) {
@@ -96,12 +96,16 @@ app.delete('/members/:id', (req, res) => {
         });
     }
 
-    Member.findByIdAndDelete(id).then((member) => {
-        if (!member) {
-            return res.status(404).send({error: 'Member not found in database!'});
+    try {
+        let deletedMember = await Member.findByIdAndDelete(id);
+        if(!deletedMember) {
+            return res.status(404).send({error: 'Could not find member in the database!'});
         }
-        res.status(200).send({member, deleted: true});
-    }).catch((err) => res.status(400).send());
+        console.log(deletedMember)
+        res.status(200).send({deleted: true});
+    } catch (e) {
+        res.status(400).send({error: 'Could not reach database at this time!'});
+    }
 });
 
 

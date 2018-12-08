@@ -175,8 +175,7 @@ describe('DELETE /members/:id', () => {
             .delete(`/members/${id}`)
             .expect(200)
             .expect((result) => {
-                expect(result.body.member.name).toBe(testMembers[0].name);
-                expect(result.body.member.email).toBe(testMembers[0].email);
+                expect(result.body.deleted).toBeTruthy();
             }).end((err, res) => {
                 if (err) {
                     return done(err);
