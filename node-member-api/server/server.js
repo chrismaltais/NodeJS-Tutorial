@@ -20,10 +20,9 @@ let app = express();
 app.use(bodyParser.json());
 
 app.post('/members', wrap(async (req, res) => {
-    let body = _.pick(req.body, ['email', 'password', 'name']);
-    let member;
     try {
-        member = new Member(body);
+        let body = _.pick(req.body, ['email', 'password', 'name']);
+        let member = new Member(body);
         await member.save();
         let token = await member.generateAuthToken();
         res.header('x-auth', token).send(member);

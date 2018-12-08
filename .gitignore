@@ -6,3 +6,4 @@ node-web-server/server.log
 node-tests/node_modules/
 node-member-api/node_modules/
 async-await/node_modules/
+chat-app/node_modules/
