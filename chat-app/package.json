@@ -1,20 +1,19 @@
 {
   "name": "chat-app",
   "version": "1.0.0",
-  "description": "Chat app using Web Sockets",
-  "main": "index.js",
+  "description": "Chat app using web sockets",
+  "main": "jest.config.js",
   "scripts": {
     "start": "node server/server.js",
-    "test": "npm test"
+    "test": "jest --detectOpenHandles"
   },
-  "engines": {
-    "node": "9.10.1"
-  },
-  "author": "Chris Maltais (chris.maltais@queensu.ca)",
+  "author": "Chris Maltais (contact@chrismaltais.com)",
   "license": "ISC",
+  "devDependencies": {
+    "jest": "^23.6.0"
+  },
   "dependencies": {
     "express": "^4.16.4",
-    "path": "^0.12.7",
     "socket.io": "^2.2.0"
   }
 }
